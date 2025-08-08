@@ -177,7 +177,7 @@ fn validate_model(model_path: &str, _stats: &TrainingStats) {
     println!("Model size: {:.2} MB", data.len() as f32 / 1024.0 / 1024.0);
 
     // Calculate some basic statistics
-    let prior_spam = total_spam as f32 / (total_spam + total_ham) as f32;
+    let prior_spam = total_spam as f64 / (total_spam + total_ham) as f64;
     println!("Prior P(spam): {:.3}", prior_spam);
     println!("Prior P(ham): {:.3}", 1.0 - prior_spam);
     println!("=======================");

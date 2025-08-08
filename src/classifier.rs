@@ -1,5 +1,5 @@
-pub const SPAM_TRESHOLD: f32 = 0.80;
-pub const DEFAULT_ALPHA: f32 = 1.0;
+pub const SPAM_TRESHOLD: f64 = 0.80;
+pub const DEFAULT_ALPHA: f64 = 1.0;
 
 static MODEL: &[u8] = include_bytes!("../model.fst");
 
@@ -63,15 +63,15 @@ impl ClassifierStats {
     }
 
     /// Calculate prior probability P(spam)
-    pub fn prior_spam(&self) -> f32 {
+    pub fn prior_spam(&self) -> f64 {
         if self.total_tokens == 0 {
             return 0.5; // Default to 50% if no data
         }
-        self.total_spam as f32 / self.total_tokens as f32
+        self.total_spam as f64 / self.total_tokens as f64
     }
 
     /// Calculate prior probability P(ham)
-    pub fn prior_ham(&self) -> f32 {
+    pub fn prior_ham(&self) -> f64 {
         1.0 - self.prior_spam()
     }
 }
@@ -80,8 +80,8 @@ impl ClassifierStats {
 pub struct NaiveBayesClassifier<D> {
     model: fst::Map<D>,
     stats: ClassifierStats,
-    alpha: f32,          // Laplace smoothing parameter
-    spam_threshold: f32, // Spam classification threshold
+    alpha: f64,          // Laplace smoothing parameter
+    spam_threshold: f64, // Spam classification threshold
 }
 
 impl NaiveBayesClassifier<&'static [u8]> {
@@ -104,15 +104,15 @@ impl<D: AsRef<[u8]>> NaiveBayesClassifier<D> {
     }
 
     /// Calculate both spam and ham likelihoods from a single counter
-    fn calculate_likelihoods(&self, counter: &Counter) -> (f32, f32) {
-        let spam_numerator = counter.spam as f32 + self.alpha;
+    fn calculate_likelihoods(&self, counter: &Counter) -> (f64, f64) {
+        let spam_numerator = counter.spam as f64 + self.alpha;
         let spam_denominator =
-            self.stats.total_spam as f32 + (self.alpha * self.stats.unique_tokens as f32);
+            self.stats.total_spam as f64 + (self.alpha * self.stats.unique_tokens as f64);
         let spam_likelihood = spam_numerator / spam_denominator;
 
-        let ham_numerator = counter.ham as f32 + self.alpha;
+        let ham_numerator = counter.ham as f64 + self.alpha;
         let ham_denominator =
-            self.stats.total_ham as f32 + (self.alpha * self.stats.unique_tokens as f32);
+            self.stats.total_ham as f64 + (self.alpha * self.stats.unique_tokens as f64);
         let ham_likelihood = ham_numerator / ham_denominator;
 
         (spam_likelihood, ham_likelihood)
@@ -127,7 +127,7 @@ impl<D: AsRef<[u8]>> NaiveBayesClassifier<D> {
     }
 
     /// Classify text and return spam probability
-    pub fn classify(&self, text: &str) -> f32 {
+    pub fn classify(&self, text: &str) -> f64 {
         let tokens = tokenize(text);
 
         if tokens.is_empty() {
@@ -163,25 +163,25 @@ impl<D: AsRef<[u8]>> NaiveBayesClassifier<D> {
 
     /// Set the alpha value for Laplace smoothing
     #[allow(dead_code)]
-    pub fn set_alpha(&mut self, alpha: f32) {
+    pub fn set_alpha(&mut self, alpha: f64) {
         self.alpha = alpha;
     }
 
     /// Get the current alpha value
     #[allow(dead_code)]
-    pub fn alpha(&self) -> f32 {
+    pub fn alpha(&self) -> f64 {
         self.alpha
     }
 
     /// Set the spam threshold value
     #[allow(dead_code)]
-    pub fn set_spam_threshold(&mut self, threshold: f32) {
+    pub fn set_spam_threshold(&mut self, threshold: f64) {
         self.spam_threshold = threshold;
     }
 
     /// Get the current spam threshold value
     #[allow(dead_code)]
-    pub fn spam_threshold(&self) -> f32 {
+    pub fn spam_threshold(&self) -> f64 {
         self.spam_threshold
     }
 
@@ -206,10 +206,10 @@ impl<D: AsRef<[u8]>> NaiveBayesClassifier<D> {
 /// Detailed classification result
 #[derive(Debug, Clone)]
 pub struct ClassificationResult {
-    pub spam_probability: f32,
-    pub ham_probability: f32,
+    pub spam_probability: f64,
+    pub ham_probability: f64,
     pub is_spam: bool,
-    pub confidence: f32,
+    pub confidence: f64,
 }
 
 pub fn tokenize(input: &str) -> Vec<String> {
@@ -236,9 +236,44 @@ pub fn tokenize(input: &str) -> Vec<String> {
 mod tests {
     use super::*;
 
-    fn classify(input: &str) -> f32 {
+    fn classify(input: &str) -> f64 {
         let classifier = NaiveBayesClassifier::new();
         classifier.classify(input)
+    }
+
+    /// Generate spam-like text with specified number of tokens using random selection
+    fn generate_spam_text(token_count: usize) -> String {
+        use rand::seq::IndexedRandom;
+
+        let spam_words = vec![
+            "FREE",
+            "MONEY",
+            "WIN",
+            "CLICK",
+            "NOW",
+            "URGENT",
+            "LIMITED",
+            "OFFER",
+            "GUARANTEED",
+            "CASH",
+            "PRIZE",
+            "WINNER",
+            "CONGRATULATIONS",
+            "CLAIM",
+            "EXCLUSIVE",
+            "DEAL",
+            "DISCOUNT",
+            "SAVE",
+            "BUY",
+            "CHEAP",
+        ];
+
+        let mut rng = rand::rng();
+        spam_words
+            .choose_multiple(&mut rng, token_count)
+            .copied()
+            .collect::<Vec<_>>()
+            .join(" ")
     }
 
     #[test]
@@ -391,5 +426,85 @@ mod tests {
         // Test classification still works with different alpha
         let result = classifier.classify("Test message");
         assert!(result >= 0.0 && result <= 1.0);
+    }
+
+    #[test]
+    fn test_moderate_length_text_no_fallback() {
+        let classifier = NaiveBayesClassifier::new();
+
+        // Create text with ~30 tokens (moderate length)
+        let moderate_spam_text = generate_spam_text(30);
+
+        let result = classifier.classify(&moderate_spam_text);
+        let prior_spam = classifier.stats.prior_spam();
+
+        println!("Moderate spam text result: {}", result);
+        println!("Prior spam probability: {}", prior_spam);
+        println!(
+            "Text length: {} tokens",
+            moderate_spam_text.split_whitespace().count()
+        );
+
+        // Verify the result is not NaN or infinite
+        assert!(result.is_finite(), "Result should be finite: {}", result);
+        assert!(
+            result >= 0.0 && result <= 1.0,
+            "Result should be in [0,1]: {}",
+            result
+        );
+
+        // For moderate length text, it should NOT hit the fallback
+        // Allow for some floating point precision issues but check it's meaningfully different
+        assert!(
+            (result - prior_spam).abs() > 0.001,
+            "Moderate text should not fall back to prior. Result: {}, Prior: {}",
+            result,
+            prior_spam
+        );
+
+        // For spam text, it should have high probability
+        assert!(
+            result > 0.5,
+            "Moderate spam text should have high spam probability: {}",
+            result
+        );
+    }
+
+    #[test]
+    fn test_extremely_long_text_fallback_behavior() {
+        let classifier = NaiveBayesClassifier::new();
+
+        // Create very long text with 500+ tokens to trigger numerical instability
+        let extremely_long_text = generate_spam_text(500);
+
+        let result = classifier.classify(&extremely_long_text);
+        let prior_spam = classifier.stats.prior_spam();
+
+        println!("Extremely long text result: {}", result);
+        println!("Prior spam probability: {}", prior_spam);
+        println!(
+            "Text length: {} tokens",
+            extremely_long_text.split_whitespace().count()
+        );
+
+        // Verify the result is still valid (not NaN/infinite)
+        assert!(
+            result.is_finite(),
+            "Result should be finite even for long text: {}",
+            result
+        );
+        assert!(
+            result >= 0.0 && result <= 1.0,
+            "Result should be in [0,1] even for long text: {}",
+            result
+        );
+
+        // For extremely long text, fallback to prior is acceptable behavior
+        // This test just verifies the fallback mechanism works correctly
+        if (result - prior_spam).abs() < f64::EPSILON * 10.0 {
+            println!("Extremely long text correctly fell back to prior probability");
+        } else {
+            println!("Extremely long text did not need fallback, result differs from prior");
+        }
     }
 }

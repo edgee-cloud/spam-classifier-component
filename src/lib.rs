@@ -34,10 +34,10 @@ struct Input {
 #[derive(Debug, Clone, serde::Serialize)]
 struct Output {
     text: String,
-    spam_probability: f32,
-    ham_probability: f32,
+    spam_probability: f64,
+    ham_probability: f64,
     is_spam: bool,
-    confidence: f32,
+    confidence: f64,
 }
 
 fn handle(req: http::Request<Json<Input>>) -> Result<http::Response<Json<Output>>> {
@@ -62,7 +62,7 @@ fn handle(req: http::Request<Json<Input>>) -> Result<http::Response<Json<Output>
 
 #[derive(serde::Deserialize, serde::Serialize)]
 pub struct Settings {
-    pub spam_threshold: f32,
+    pub spam_threshold: f64,
 }
 
 impl Settings {
@@ -75,7 +75,7 @@ impl Settings {
 
         let spam_threshold = data
             .get("spam_threshold")
-            .and_then(|s| s.parse::<f32>().ok())
+            .and_then(|s| s.parse::<f64>().ok())
             .unwrap_or(classifier::SPAM_TRESHOLD);
 
         Ok(Self { spam_threshold })
