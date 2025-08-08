@@ -86,7 +86,7 @@ impl ClassifierStats {
 pub struct NaiveBayesClassifier {
     model: fst::Map<&'static [u8]>,
     stats: ClassifierStats,
-    alpha: f32, // Laplace smoothing parameter
+    alpha: f32,          // Laplace smoothing parameter
     spam_threshold: f32, // Spam classification threshold
 }
 
