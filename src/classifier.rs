@@ -47,7 +47,7 @@ impl ClassifierStats {
         }
     }
 
-    pub fn from_model(model: &fst::Map<&[u8]>) -> Self {
+    pub fn from_model<D: AsRef<[u8]>>(model: &fst::Map<D>) -> Self {
         let mut stats = Self::new();
         let mut stream = model.stream();
 
@@ -77,16 +77,22 @@ impl ClassifierStats {
 }
 
 /// Optimized Naive Bayes classifier for spam detection
-pub struct NaiveBayesClassifier {
-    model: fst::Map<&'static [u8]>,
+pub struct NaiveBayesClassifier<D> {
+    model: fst::Map<D>,
     stats: ClassifierStats,
     alpha: f32,          // Laplace smoothing parameter
     spam_threshold: f32, // Spam classification threshold
 }
 
-impl NaiveBayesClassifier {
+impl NaiveBayesClassifier<&'static [u8]> {
     pub fn new() -> Self {
         let model = fst::Map::new(MODEL).unwrap();
+        Self::from_model(model)
+    }
+}
+
+impl<D: AsRef<[u8]>> NaiveBayesClassifier<D> {
+    pub fn from_model(model: fst::Map<D>) -> Self {
         let stats = ClassifierStats::from_model(&model);
 
         Self {
@@ -149,10 +155,10 @@ impl NaiveBayesClassifier {
 
         // Handle NaN and infinite values
         if result.is_nan() || result.is_infinite() {
-            return self.stats.prior_spam();
+            self.stats.prior_spam()
+        } else {
+            result
         }
-
-        result
     }
 
     /// Set the alpha value for Laplace smoothing
