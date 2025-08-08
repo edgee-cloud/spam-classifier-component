@@ -5,7 +5,7 @@ static MODEL: &[u8] = include_bytes!("../model.fst");
 
 use fst::Streamer;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Default, Debug, Clone, Copy)]
 pub struct Counter {
     pub spam: u32,
     pub ham: u32,
@@ -20,17 +20,11 @@ impl Counter {
     }
 
     #[allow(dead_code)]
-    pub fn to_u64(&self) -> u64 {
+    pub fn to_u64(self) -> u64 {
         let spam = self.spam as u64;
         let ham = self.ham as u64;
 
         (spam << 32) | ham
-    }
-}
-
-impl Default for Counter {
-    fn default() -> Self {
-        Self { spam: 0, ham: 0 }
     }
 }
 
