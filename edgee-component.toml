@@ -1,0 +1,23 @@
+manifest-version = 1
+
+[component]
+name = "spam-classifier"
+version = "0.1.2"
+
+category = "edge-function"
+subcategory = "wasm-function"
+language = "Rust"
+wit-version = "1.0.0"
+
+[component.build]
+command = """
+  cargo build --target wasm32-wasip2 --release && \
+  rm -f component.wasm && \
+  cp target/wasm32-wasip2/release/spam_classifier_component.wasm component.wasm
+"""
+output_path = "component.wasm"
+
+[component.settings.spam_threshold]
+title = "Spam classification threshold (optional)"
+type = "string"
+description = "(range: 0.0-1.0) Higher values = stricter detection."
