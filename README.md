@@ -41,7 +41,7 @@ settings.spam_threshold = "0.80"
 
 - **spam_threshold** (optional): Threshold for spam classification (default: 0.80)
   - Values between 0.0 and 1.0
-  - Higher values = more strict spam detection  
+  - Higher values = more strict spam detection
   - Lower values = more sensitive spam detection
 
 ## Usage
@@ -60,8 +60,10 @@ Response:
 ```json
 {
   "text": "FREE MONEY! Click here to win $1000000!",
-  "score": 0.85,
-  "is_spam": true
+  "spam_probability": 0.8542,
+  "ham_probability": 0.1458,
+  "is_spam": true,
+  "confidence": 0.8542
 }
 ```
 
@@ -79,20 +81,22 @@ const response = await fetch('/classify', {
 });
 
 const result = await response.json();
-console.log(`Spam probability: ${result.score}`);
+console.log(`Spam probability: ${result.spam_probability}`);
+console.log(`Ham probability: ${result.ham_probability}`);
 console.log(`Is spam: ${result.is_spam}`);
+console.log(`Confidence: ${result.confidence}`);
 ```
 
 ## Features
 
 ### 🧠 **Machine Learning Core**
 - **Naive Bayes classifier** with optimized likelihood calculations
-- **Laplace smoothing** (α=1, configurable) to handle unseen tokens
+- **Laplace smoothing** (α=1.0, configurable) to handle unseen tokens
 - **Prior probability calculation** from training data statistics
 - **Detailed classification results** with spam/ham probabilities and confidence scores
 
 ### 📝 **Text Processing Pipeline**
-- **Advanced tokenization** with Unicode sentence and word splitting
+- **Advanced tokenization** with Unicode sentence and word splitting via unobtanium-segmenter
 - **Multi-language support** with automatic language detection
 - **Text normalization** (lowercase conversion and stemming via rust-stemmers)
 - **AlphaNumeric token filtering** to focus on meaningful content
@@ -103,7 +107,7 @@ console.log(`Is spam: ${result.is_spam}`);
 - **64-bit packed counters** for space-efficient token storage
 - **Log-space calculations** to prevent numerical underflow
 - **Static model embedding** for fast initialization in WASM environment
-w
+
 ### 🛡️ **Reliability & Safety**
 - **Probability bounds enforcement** (0.0-1.0) with NaN/infinite value protection
 - **Fallback to prior probabilities** for edge cases
@@ -167,6 +171,8 @@ The spam classifier includes a powerful training binary that can build and updat
 ```bash
 cargo run --bin train --features training -- input.csv model.fst
 ```
+
+Note: The training feature must be enabled to build the training binary.
 
 ### Dataset Format
 

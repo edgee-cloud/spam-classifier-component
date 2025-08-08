@@ -11,7 +11,7 @@ mod classifier;
 const TEXT_INDEX: usize = 0;
 const LABEL_INDEX: usize = 1;
 
-const LABEL_HAM: &str = "not_spam";
+const LABEL_HAM: &str = "ham";
 const LABEL_SPAM: &str = "spam";
 
 #[derive(Debug)]

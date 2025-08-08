@@ -2,7 +2,7 @@ manifest-version = 1
 
 [component]
 name = "spam-classifier"
-version = "0.1.2"
+version = "1.0.0"
 
 category = "edge-function"
 subcategory = "wasm-function"
