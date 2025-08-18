@@ -85,7 +85,10 @@ impl Settings {
             .and_then(|s| s.parse::<f64>().ok())
             .unwrap_or(classifier::DEFAULT_ALPHA);
 
-        Ok(Self { spam_threshold, laplace_smoothing_factor })
+        Ok(Self {
+            spam_threshold,
+            laplace_smoothing_factor,
+        })
     }
 
     pub fn from_req<B>(req: &http::Request<B>) -> Result<Self> {
