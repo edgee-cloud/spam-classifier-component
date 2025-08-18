@@ -161,7 +161,7 @@ Performance benchmarks on x86 (native, not WASM):
 - **Long text** (62 tokens): ~128 µs → **484K tokens/sec**
 - **Spam text** (19 tokens): ~204 µs → **93K tokens/sec**
 
-*Note: WASM performance will be lower than native x86 benchmarks shown above*
+*Note: Wasm performance will be lower than native x86 benchmarks shown above*
 
 Key optimizations:
 - **Single model lookup per token** (reduced from 2 to 1 lookup)
