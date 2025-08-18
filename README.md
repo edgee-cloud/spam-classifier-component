@@ -112,7 +112,7 @@ console.log(`Confidence: ${result.confidence}`);
 - **Finite State Transducer (FST)** for O(log n) token lookup with embedded model
 - **64-bit packed counters** for space-efficient token storage
 - **Log-space calculations** to prevent numerical underflow
-- **Static model embedding** for fast initialization in WASM environment
+- **Static model embedding** for fast initialization in Wasm environment
 
 ### 🛡️ **Reliability & Safety**
 - **Probability bounds enforcement** (0.0-1.0) with NaN/infinite value protection
