@@ -21,3 +21,8 @@ output_path = "component.wasm"
 title = "Spam classification threshold (optional)"
 type = "string"
 description = "(range: 0.0-1.0) Higher values = stricter detection."
+
+[component.settings.laplace_smoothing_factor]
+title = "Laplace smoothing factor (optional)"
+type = "string"
+description = "(range: 0.0+) Smoothing parameter for Naive Bayes. Default: 1.0. Higher values = more smoothing."

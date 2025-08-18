@@ -35,6 +35,7 @@ id = "spam-classifier"
 file = "/var/edgee/components/component.wasm"
 settings.edgee_path = "/classify"
 settings.spam_threshold = "0.80"
+settings.laplace_smoothing_factor = "1.0"
 ```
 
 ### Settings
@@ -43,6 +44,11 @@ settings.spam_threshold = "0.80"
   - Values between 0.0 and 1.0
   - Higher values = more strict spam detection
   - Lower values = more sensitive spam detection
+
+- **laplace_smoothing_factor** (optional): Laplace smoothing parameter for Naive Bayes (default: 1.0)
+  - Values 0.0 and above
+  - Higher values = more smoothing for unseen tokens
+  - Lower values = less smoothing, may improve accuracy but reduce robustness
 
 ## Usage
 
@@ -91,7 +97,7 @@ console.log(`Confidence: ${result.confidence}`);
 
 ### 🧠 **Machine Learning Core**
 - **Naive Bayes classifier** with optimized likelihood calculations
-- **Laplace smoothing** (α=1.0, configurable) to handle unseen tokens
+- **Configurable Laplace smoothing** (default α=1.0) to handle unseen tokens
 - **Prior probability calculation** from training data statistics
 - **Detailed classification results** with spam/ham probabilities and confidence scores
 

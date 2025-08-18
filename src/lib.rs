@@ -46,6 +46,7 @@ fn handle(req: http::Request<Json<Input>>) -> Result<http::Response<Json<Output>
     let settings = Settings::from_req(&req)?;
     let mut classifier = classifier::NaiveBayesClassifier::new();
     classifier.set_spam_threshold(settings.spam_threshold);
+    classifier.set_alpha(settings.laplace_smoothing_factor);
     let result = classifier.classify_detailed(input);
 
     http::Response::builder()
@@ -63,6 +64,7 @@ fn handle(req: http::Request<Json<Input>>) -> Result<http::Response<Json<Output>
 #[derive(serde::Deserialize, serde::Serialize)]
 pub struct Settings {
     pub spam_threshold: f64,
+    pub laplace_smoothing_factor: f64,
 }
 
 impl Settings {
@@ -78,7 +80,12 @@ impl Settings {
             .and_then(|s| s.parse::<f64>().ok())
             .unwrap_or(classifier::SPAM_TRESHOLD);
 
-        Ok(Self { spam_threshold })
+        let laplace_smoothing_factor = data
+            .get("laplace_smoothing_factor")
+            .and_then(|s| s.parse::<f64>().ok())
+            .unwrap_or(classifier::DEFAULT_ALPHA);
+
+        Ok(Self { spam_threshold, laplace_smoothing_factor })
     }
 
     pub fn from_req<B>(req: &http::Request<B>) -> Result<Self> {
