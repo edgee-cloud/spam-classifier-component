@@ -157,7 +157,7 @@ cargo bench
 Performance benchmarks on x86 (native, not WASM):
 
 - **Short text** (2 tokens): ~28 µs → **72K tokens/sec**
-- **Medium text** (15 tokens): ~66 µs → **227K tokens/sec** 
+- **Medium text** (15 tokens): ~66 µs → **227K tokens/sec**
 - **Long text** (62 tokens): ~128 µs → **484K tokens/sec**
 - **Spam text** (19 tokens): ~204 µs → **93K tokens/sec**
 
@@ -245,7 +245,7 @@ The current embedded model was trained on the following public datasets from Hug
    - **License**: Apache 2.0
 
 2. **[spam_detector](https://huggingface.co/datasets/0x7o/spam_detector)** by 0x7o
-   - **Size**: 10K-100K samples
+   - **Size**: 10K samples
    - **Language**: English
    - **Format**: CSV format
    - **Content**: Text classification data focused on spam detection
