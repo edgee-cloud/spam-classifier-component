@@ -231,6 +231,33 @@ Prior P(ham): 0.505
 =======================
 ```
 
+### Training Datasets
+
+The current embedded model was trained on the following public datasets from Hugging Face:
+
+#### Datasets Used
+
+1. **[all-scam-spam](https://huggingface.co/datasets/FredZhang7/all-scam-spam)** by FredZhang7
+   - **Size**: 42,619 preprocessed text messages and emails
+   - **Languages**: 43 languages (Norwegian, Spanish, English, etc.)
+   - **Format**: Parquet with `text` and `is_spam` columns
+   - **Content**: Mix of manually collected and preprocessed spam/ham messages
+   - **License**: Apache 2.0
+
+2. **[spam_detector](https://huggingface.co/datasets/0x7o/spam_detector)** by 0x7o
+   - **Size**: 10K-100K samples
+   - **Language**: English
+   - **Format**: CSV format
+   - **Content**: Text classification data focused on spam detection
+   - **License**: Apache 2.0
+
+#### Data Processing
+
+- Combined datasets were merged and preprocessed for consistent format
+- Text normalization includes lowercasing and stemming
+- Duplicate detection and removal for cleaner training data
+- Balanced sampling to prevent class imbalance issues
+
 ### Model Storage
 
 - Models are stored as **Finite State Transducers (FST)** for optimal performance
