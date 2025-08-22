@@ -3,6 +3,34 @@ manifest-version = 1
 [component]
 name = "spam-classifier"
 version = "1.0.0"
+description = """
+Spam Classification component by Edgee provides real-time, ML-powered text classification through a high-performance Naive Bayes classifier optimized for edge deployment.
+
+## Key Features
+- **Real-Time Classification**: Instant spam detection with configurable thresholds
+- **Edge Performance**: Optimized WASM deployment for fast response times
+- **FST-Based Model**: Efficient Finite State Transducer storage for minimal memory footprint
+- **Advanced Text Processing**: Unicode-aware tokenization with stemming and normalization
+- **Configurable Sensitivity**: Adjustable spam thresholds and smoothing parameters
+- **JSON API**: RESTful endpoint with detailed classification results
+
+## Primary Use Cases
+- **Content Moderation**: Automatically filter spam content in user-generated text
+- **Email Security**: Real-time email spam detection and filtering
+- **Comment Systems**: Protect forums and social platforms from spam messages
+- **Analytics Enhancement**: Improve data quality by filtering out spam interactions
+- **User Experience**: Reduce user exposure to unwanted spam content
+
+## Key Benefits
+- **Enhanced Security**: Proactive spam protection at the edge
+- **Improved Performance**: No external API calls or backend dependencies required
+- **Cost Effective**: Efficient WASM execution reduces computational overhead
+- **Compliance Ready**: Helps maintain content quality standards
+- **Developer Friendly**: Simple JSON API with comprehensive response data
+"""
+
+documentation = "https://www.edgee.cloud/docs/components/edge-functions/spam-classifier"
+repository = "https://github.com/edgee-cloud/spam-classifier-component"
 
 category = "edge-function"
 subcategory = "wasm-function"
